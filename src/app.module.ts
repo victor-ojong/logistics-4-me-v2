@@ -8,9 +8,16 @@ import { AdminModule } from './app/admin/admin.module';
 import { AuthenticationModule } from './app/authentication/authentication.module';
 import { UsersModule } from './app/users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.sql'),
+    }),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/logistics-4-me'),
     BookingsModule,
     ProductsModule,
