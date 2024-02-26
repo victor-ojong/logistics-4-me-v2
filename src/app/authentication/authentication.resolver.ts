@@ -13,7 +13,7 @@ export class AuthenticationResolver {
     @Args('createAuthenticationInput')
     createAuthenticationInput: CreateAuthenticationInput,
   ) {
-    return this.authenticationService.create(createAuthenticationInput);
+    // return this.authenticationService.create(createAuthenticationInput);
   }
 
   @Query(() => [Authentication], { name: 'authentication' })
