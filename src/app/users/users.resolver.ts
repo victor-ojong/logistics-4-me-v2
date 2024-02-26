@@ -15,16 +15,6 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
-  @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.findOne(id);
-  }
-
   @Query(() => User, { name: 'user' })
   async login(
     @Args('loginInput') loginInput: LoginInput,
@@ -40,9 +30,19 @@ export class UsersResolver {
     return user;
   }
 
+  @Query(() => [User], { name: 'users' })
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Query(() => User, { name: 'user' })
+  findOne(@Args('id', { type: () => Int }) id: number) {
+    return this.usersService.findOne(id);
+  }
+
   @Mutation(() => User)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+    return this.usersService.update(updateUserInput);
   }
 
   @Mutation(() => User)

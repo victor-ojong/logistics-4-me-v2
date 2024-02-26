@@ -17,11 +17,11 @@ export class AuthenticationService {
     return salt + '.' + hashed.toString('hex');
   }
 
-  async verify(DBpassword: string, password) {
+  async verify(DBpassword: string, password: string) {
     const [salt, oldHash] = DBpassword.split('.');
     const newHash = (await scrypt(password, salt, 32)) as Buffer;
 
-    return oldHash === newHash.toString('hex');
+    return oldHash === newHash.toString('hex') ?? false;
   }
 
   findAll() {

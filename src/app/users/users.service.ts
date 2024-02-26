@@ -13,6 +13,7 @@ export class UsersService {
     private readonly userModel = Model<User>,
     private readonly authenticationService: AuthenticationService,
   ) {}
+
   async create(createUserInput: CreateUserInput) {
     const userExist = await this.userModel.findOne({
       email: createUserInput.email,
@@ -50,16 +51,50 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new HttpException('User does not exist', 404);
+    }
+
+    return user;
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(updateUserInput: UpdateUserInput) {
+    if (updateUserInput.password && !updateUserInput.oldPassword) {
+      throw new HttpException(
+        'New Password and old password must be provided ',
+        403,
+      );
+    }
+
+    if (updateUserInput.password && updateUserInput.oldPassword) {
+      const user = await this.findOne(updateUserInput.id);
+
+      const isVerifiedPassword = await this.authenticationService.verify(
+        user.password,
+        updateUserInput.oldPassword,
+      );
+
+      if (isVerifiedPassword) {
+        const newHashedPassword = await this.authenticationService.hash(
+          updateUserInput.password,
+        );
+
+        updateUserInput.password = newHashedPassword;
+      }
+    }
+
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      updateUserInput.id,
+      updateUserInput,
+    );
+    return updatedUser;
   }
 
   remove(id: number) {
