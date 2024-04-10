@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { LoginInput } from './dto/login-user.input';
+import { Session } from '@nestjs/common';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -11,6 +13,21 @@ export class UsersResolver {
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
+  }
+
+  @Query(() => User, { name: 'user' })
+  async login(
+    @Args('loginInput') loginInput: LoginInput,
+    @Session() session: any,
+  ) {
+    const user = await this.usersService.login(
+      loginInput.email,
+      loginInput.password,
+    );
+
+    session.userId = user?.id;
+
+    return user;
   }
 
   @Query(() => [User], { name: 'users' })
@@ -25,7 +42,7 @@ export class UsersResolver {
 
   @Mutation(() => User)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+    return this.usersService.update(updateUserInput);
   }
 
   @Mutation(() => User)

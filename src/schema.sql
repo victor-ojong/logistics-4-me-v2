@@ -28,8 +28,11 @@ type Authentication {
 }
 
 type User {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
 }
 
 type Query {
@@ -41,7 +44,12 @@ type Query {
   admin(id: Int!): Admin!
   authentication(id: Int!): Authentication!
   users: [User!]!
-  user(id: Int!): User!
+  user(loginInput: LoginInput!): User!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 type Mutation {
@@ -121,12 +129,17 @@ input UpdateAuthenticationInput {
 }
 
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
+  firstName: String
+  lastName: String
+  email: String
+  password: String
 }
